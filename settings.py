@@ -8,7 +8,7 @@ LIST_URL  = "https://k.kuaishou.com/?__accountId__=9964030#/star_plaza/video?__a
                       # 首次登录建议 False（有头方便手动验证）
 STORE_DIR = "./.pw-store"
 # 存储目录换成你项目里的新文件夹，不要用 Default
-USER_DATA_DIR = r"D:\9999999\pw-profile"
+USER_DATA_DIR = "./pw-profile"
 PROFILE_NAME = "Default"   # 这里随便填，不会用到
 HEADLESS = False
 PROXY = None                           # e.g. "http://user:pass@host:port"
