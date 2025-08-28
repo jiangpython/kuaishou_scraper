@@ -12,22 +12,22 @@ from detail_scraper_kuaishou import scrape_detail_full
 from storage_excel import export_records_to_excel
 
 async def run():
-    launch_args = {"headless": HEADLESS, "args": ["--start-maximized"]}
-    if PROXY:
-        launch_args["proxy"] = {"server": PROXY}
+    #launch_args = {"headless": HEADLESS, "args": ["--start-maximized"]}
+    #if PROXY:
+    #    launch_args["proxy"] = {"server": PROXY}
 
-    async with async_playwright() as p:
-        browser = await p.chromium.launch_persistent_context(user_data_dir=USER_DATA_DIR, **launch_args)
-        page = await browser.new_page()
-        page.set_default_timeout(TIMEOUT)
+    #async with async_playwright() as p:
+    #    browser = await p.chromium.launch_persistent_context(user_data_dir=USER_DATA_DIR, **launch_args)
+    #    page = await browser.new_page()
+    #    page.set_default_timeout(TIMEOUT)
 
         # 1) 登录 + 导航到“短视频广场”起始列表
-        await ensure_login(page)
-        ok = await go_to_short_video_square(page)
-        if not ok:
-            print("导航失败，退出。")
-            await browser.close()
-            return
+    #    await ensure_login(page)
+    #    ok = await go_to_short_video_square(page)
+    #    if not ok:
+    #        print("导航失败，退出。")
+    #        await browser.close()
+    #        return
 
         # 2) 列表翻页 & 采集详情
         all_records = []

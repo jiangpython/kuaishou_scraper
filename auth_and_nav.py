@@ -71,10 +71,23 @@ async def go_to_short_video_square(page) -> bool:
 
 
 async def auth_and_nav():
-    # 用 Playwright 自带 Chromium，不再用系统 Chrome
+    # 优化浏览器启动参数，隐藏自动化特征
     launch_args = {
         "headless": HEADLESS,
-        "args": ["--start-maximized"],
+        "args": [
+            "--start-maximized",
+            "--disable-blink-features=AutomationControlled",
+            "--disable-extensions-except",
+            "--disable-extensions",
+            "--no-sandbox",
+            "--disable-setuid-sandbox", 
+            "--disable-dev-shm-usage",
+            "--disable-web-security",
+            "--allow-running-insecure-content",
+            "--disable-features=VizDisplayCompositor",
+            "--disable-ipc-flooding-protection",
+            "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        ],
     }
     if PROXY:
         launch_args["proxy"] = {"server": PROXY}
@@ -86,6 +99,36 @@ async def auth_and_nav():
         )
         page = await browser.new_page()
         page.set_default_timeout(TIMEOUT)
+        
+        # 隐藏 webdriver 特征
+        await page.add_init_script("""
+            Object.defineProperty(navigator, 'webdriver', {
+                get: () => undefined,
+            });
+            
+            // 修改 plugins 长度
+            Object.defineProperty(navigator, 'plugins', {
+                get: () => [1, 2, 3, 4, 5],
+            });
+            
+            // 修改语言
+            Object.defineProperty(navigator, 'languages', {
+                get: () => ['zh-CN', 'zh', 'en'],
+            });
+            
+            // 伪造 Chrome 对象
+            window.chrome = {
+                runtime: {},
+            };
+            
+            // 伪造权限查询
+            const originalQuery = window.navigator.permissions.query;
+            window.navigator.permissions.query = (parameters) => (
+                parameters.name === 'notifications' ?
+                    Promise.resolve({ state: Notification.permission }) :
+                    originalQuery(parameters)
+            );
+        """)
 
         # 登录 + 导航
         await ensure_login(page)
